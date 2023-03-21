@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const artifact = require('@actions/artifact');
 const { replaceMdImages } = require('./replace-md-images');
+const { notify } = require('./notify');
 
 const uploadArtifact = async (infos) => {
   const artifactClient = artifact.create()
@@ -24,6 +25,7 @@ const run = async () => {
   const bucket = core.getInput('bucket')
   const region = core.getInput('region')
   const prefix = core.getInput('prefix')
+  const webhookUrl = core.getInput('webhookUrl')
 
   const octokit = new github.getOctokit(token)
 
@@ -55,8 +57,13 @@ const run = async () => {
       }
     }))
     console.log(`previewUrl: ${JSON.stringify(infos.map(info => info.previewUrl))}`)
-    const result = uploadArtifact(infos)
-    console.log(`result: ${JSON.stringify(result)}`)
+    if (infos.length > 0) {
+      const result = uploadArtifact(infos)
+      console.log(`result: ${JSON.stringify(result)}`)
+      if (webhookUrl) {
+        notify(infos, webhookUrl)
+      }
+    }
     core.setOutput('result', infos)
   } catch (error) {
     core.setFailed(`run error: ${error.message}`);

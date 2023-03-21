@@ -82618,6 +82618,42 @@ module.exports = {
 
 /***/ }),
 
+/***/ 1763:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const fetch = __nccwpck_require__(467)
+
+const notify = async (infos, webhookUrl) => {
+  let links = infos.map(info => `[${info.previewUrl}](${info.previewUrl})`)
+  if (links.length > 0) {
+    links = links.map((link, index) => `${index+1}. ${link}`)
+  }
+  const content = `
+    ### 新的文章已就绪
+    ${links.join('\n')}
+    > 可进入[排版页面](https://markdown.com.cn/editor/)查看效果
+  `
+  const res = await fetch(webhookUrl, {
+    method: 'POST',
+    body: JSON.stringify({
+      msgtype: 'markdown',
+      markdown: { content },
+    }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  const json = await res.json()
+  console.log(`notify response: ${JSON.stringify(json)}`)
+}
+
+module.exports = {
+  notify
+}
+
+
+/***/ }),
+
 /***/ 138:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -82651,6 +82687,7 @@ const uploadImagesToCos = async (images, cosOptions = {}) => {
   }))
   return replaceInfos;
 }
+
 const replaceMarkdownImageUrls = (content, replaceInfos) => {
   replaceInfos.forEach(({ oldVal, newVal }) => {
     content = content.replaceAll(oldVal, newVal)
@@ -83123,6 +83160,7 @@ const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
 const artifact = __nccwpck_require__(2605);
 const { replaceMdImages } = __nccwpck_require__(138);
+const { notify } = __nccwpck_require__(1763);
 
 const uploadArtifact = async (infos) => {
   const artifactClient = artifact.create()
@@ -83145,6 +83183,7 @@ const run = async () => {
   const bucket = core.getInput('bucket')
   const region = core.getInput('region')
   const prefix = core.getInput('prefix')
+  const webhookUrl = core.getInput('webhookUrl')
 
   const octokit = new github.getOctokit(token)
 
@@ -83176,8 +83215,13 @@ const run = async () => {
       }
     }))
     console.log(`previewUrl: ${JSON.stringify(infos.map(info => info.previewUrl))}`)
-    const result = uploadArtifact(infos)
-    console.log(`result: ${JSON.stringify(result)}`)
+    if (infos.length > 0) {
+      const result = uploadArtifact(infos)
+      console.log(`result: ${JSON.stringify(result)}`)
+      if (webhookUrl) {
+        notify(infos, webhookUrl)
+      }
+    }
     core.setOutput('result', infos)
   } catch (error) {
     core.setFailed(`run error: ${error.message}`);

@@ -28,6 +28,7 @@ const uploadImagesToCos = async (images, cosOptions = {}) => {
   }))
   return replaceInfos;
 }
+
 const replaceMarkdownImageUrls = (content, replaceInfos) => {
   replaceInfos.forEach(({ oldVal, newVal }) => {
     content = content.replaceAll(oldVal, newVal)

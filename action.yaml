@@ -20,6 +20,8 @@ inputs:
   prefix:
     description: 'cos prefix'
     required: true
+  webhookUrl:
+    description: 'work wechat robot webhook url'
 outputs:
   result:
     description: 'handled result'

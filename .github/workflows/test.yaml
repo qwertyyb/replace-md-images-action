@@ -17,3 +17,4 @@ jobs:
           secretId: ${{ secrets.SECRETID }}
           secretKey: ${{ secrets.SECRETKEY }}
           prefix: '/tmp/md/'
+          webhookUrl: ${{ secrets.WEBHOOKURL }}

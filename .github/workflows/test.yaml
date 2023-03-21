@@ -12,6 +12,11 @@ jobs:
         uses: ./
         with:
           token: ${{ secrets.github_token }}
+          bucket: ${{ secrets.BUCKET }}
+          region: ${{ secrets.REGION }}
+          secretId: ${{ secrets.SECRETID }}
+          secretKey: ${{ secrets.SECRETKEY }}
+          prefix: '/tmp/md/'
       # Use the output from the `hello` step
       - name: Get the output time
         run: echo "${{ steps.action.outputs.time }}"

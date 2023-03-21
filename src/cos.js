@@ -1,13 +1,22 @@
 const COS = require('cos-nodejs-sdk-v5');
-const cos = new COS({
-});
+const path = require('path');
+
+let cos = null
 
 module.exports = {
-  async upload({ buffer, fileName}) {
+  initClient({ secretId, secretKey }) {
+    cos = new COS({
+      SecretId: secretId,
+      SecretKey: secretKey
+    })
+  },
+  async upload({ buffer, fileName}, cosOptions = {}) {
+    if (!cos) {
+      throw new Error('initClient is not called')
+    }
     const params = {
-      Bucket: 'person-1253524658',
-      Region: 'ap-beijing',
-      Key: '/tmp/md/' + fileName,
+      ...cosOptions,
+      Key: path.join(cosOptions.prefix || 'md/', fileName)
     }
     await new Promise((resolve, reject) => cos.putObject({
       ...params,

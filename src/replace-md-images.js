@@ -1,7 +1,7 @@
 const fs = require('fs')
 const getMarkdownUrls = require('gh-md-urls')
 const fetch = require('node-fetch')
-const { upload } = require('./cos')
+const { upload, initClient } = require('./cos')
 
 const readFile = (path) => fs.readFileSync(path, 'utf8')
 
@@ -14,14 +14,15 @@ const getImages = (content) => {
   return images
 }
 
-const uploadImagesToCos = async (images) => {
+const uploadImagesToCos = async (images, cosOptions = {}) => {
+  initClient(cosOptions)
   const replaceInfos = await Promise.all(images.map(async item => {
     const res = await fetch(item.url)
     const fileName = item.url.split('/').reverse()[0]
     if (!fileName) throw new Error('获取文件名失败: ' + item.url)
     if (res.headers.get('content-type').startsWith('image/')) {
       const buffer = await res.arrayBuffer()
-      const url = await upload({ buffer: Buffer.from(buffer), fileName })
+      const url = await upload({ buffer: Buffer.from(buffer), fileName }, cosOptions)
       return { oldVal: item.url, newVal: url}
     }
   }))
@@ -34,16 +35,16 @@ const replaceMarkdownImageUrls = (content, replaceInfos) => {
   return content;
 }
 
-const start = async (fileName) => {
-  const content = readFile()
+const replaceMdImages = async (fileName, cosOptions = {}) => {
+  const content = readFile(fileName)
   const images = getImages(content)
   console.log('文件中包含如下图片: ', JSON.stringify(images, undefined, 2))
-  const replaceInfos = await uploadImagesToCos(images)
+  const replaceInfos = await uploadImagesToCos(images, cosOptions)
   console.log('上传cos后的图片地址: ', JSON.stringify(replaceInfos, undefined, 2))
   const newContent = replaceMarkdownImageUrls(content, replaceInfos)
   return newContent
 }
 
 module.exports = {
-  start
+  replaceMdImages
 }

@@ -5,6 +5,21 @@ inputs:
     description: 'github token'
     default: ${{ github.token }}
     required: true
+  secretId:
+    description: 'cos secret id',
+    required: true
+  secretKey:
+    description: 'cos secret key',
+    required: true
+  bucket:
+    description: 'cos bucket',
+    required: true
+  region:
+    description: 'cos region',
+    required: true
+  prefix:
+    description: 'cos prefix',
+    required: true
 outputs:
   content:
     description: 'replaced markdown'

@@ -76408,7 +76408,7 @@ const run = async () => {
     const repo = github.context.repo
     console.log(`repo: ${JSON.stringify(repo)}`)
     console.log(`sha: ${github.context.sha}`)
-    const commit = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
+    const res = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
       owner: repo.owner,
       repo: repo.repo,
       ref: github.context.ref,
@@ -76416,7 +76416,7 @@ const run = async () => {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     })
-    const mdfiles = commit.files.filter(file => file.status !== 'removed' && file.filename.endsWith('.md')).map(file => file.filename)
+    const mdfiles = res.data.files.filter(file => file.status !== 'removed' && file.filename.endsWith('.md')).map(file => file.filename)
     console.log(`markdown files: ${JSON.stringify(mdfiles, undefined, 2)}`);
 
     const cosOptions = {
@@ -76431,7 +76431,7 @@ const run = async () => {
     }))
     core.setOutput('content', content)
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(`run error: ${error.message}`);
   }
 }
 

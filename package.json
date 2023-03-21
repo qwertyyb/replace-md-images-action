@@ -17,5 +17,8 @@
     "cos-nodejs-sdk-v5": "^2.11.19",
     "gh-md-urls": "^1.1.1",
     "node-fetch": "^2.6.9"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.36.1"
   }
 }

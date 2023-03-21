@@ -9792,13 +9792,26 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(4799);
 const github = __nccwpck_require__(7956)
 
-try {
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
-} catch (error) {
-  core.setFailed(error.message);
+const run = async () => {
+  const token = core.getInput('token');
+
+  const octokit = new github.getOctokit(token)
+
+  try {
+    const repo = github.context.repo
+    const commit = await octokit.rest.git.getCommit({
+      owner: repo.owner,
+      repo: repo.repo,
+      commit: github.context.sha
+    })
+    console.log(`commit: ${JSON.stringify(commit, undefined, 2)}`);
+    core.setOutput('content', 'payload')
+  } catch (error) {
+    core.setFailed(error.message);
+  }
 }
+
+run()
 })();
 
 module.exports = __webpack_exports__;

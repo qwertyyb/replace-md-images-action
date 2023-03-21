@@ -10,6 +10,8 @@ jobs:
       - name: test
         id: action
         uses: ./
+        with:
+          token: ${{ secrets.github_token }}
       # Use the output from the `hello` step
       - name: Get the output time
         run: echo "${{ steps.action.outputs.time }}"

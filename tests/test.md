@@ -116,4 +116,5 @@ func _draw():
 
 ![编辑器效果](https://i.328888.xyz/2023/03/20/PhDSP.png)
 
+
 可以选中 `GroundShapePath`，然后点击预览区域上方的锁图标，点击锁定位置，这样就不用担心 `GroundShapePath` 被意外移动了。

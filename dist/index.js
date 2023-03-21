@@ -75877,7 +75877,7 @@ module.exports = {
     }
     const params = {
       Bucket: cosOptions.bucket,
-      Region: cosOptions.Region,
+      Region: cosOptions.region,
       Key: path.join(cosOptions.prefix || 'md/', fileName)
     }
     await new Promise((resolve, reject) => cos.putObject({

@@ -1,6 +1,21 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const artifact = require('@actions/artifact');
 const { replaceMdImages } = require('./replace-md-images');
+
+const uploadArtifact = async (infos) => {
+  const artifactClient = artifact.create()
+  const artifactName = 'md';
+  const files = infos.map(info => info.newFileName)
+  console.log(`artifact: ${JSON.stringify(files)}`)
+  const rootDirectory = process.cwd()
+  const options = {
+      continueOnError: false
+  }
+
+  const uploadResult = await artifactClient.uploadArtifact(artifactName, files, rootDirectory, options)
+  return uploadResult
+}
 
 const run = async () => {
   const token = core.getInput('token')
@@ -30,14 +45,15 @@ const run = async () => {
     const cosOptions = {
       secretId, secretKey, bucket, region, prefix
     }
-    const content = await Promise.all(mdfiles.map(async mdfile => {
-      const newContent = await replaceMdImages(mdfile, cosOptions)
+    const infos = await Promise.all(mdfiles.map(async mdfile => {
+      const newFileName = await replaceMdImages(mdfile, cosOptions)
       return {
         filename: mdfile,
-        content: newContent
+        newFileName: newFileName
       }
     }))
-    core.setOutput('content', content)
+    const result = uploadArtifact(infos)
+    console.log(`result: ${JSON.stringify(result)}`)
   } catch (error) {
     core.setFailed(`run error: ${error.message}`);
   }

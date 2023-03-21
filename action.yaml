@@ -20,9 +20,6 @@ inputs:
   prefix:
     description: 'cos prefix'
     required: true
-outputs:
-  content:
-    description: 'replaced markdown'
 runs:
   using: 'node16'
   main: 'dist/index.js'

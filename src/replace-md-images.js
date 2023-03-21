@@ -42,7 +42,9 @@ const replaceMdImages = async (fileName, cosOptions = {}) => {
   const replaceInfos = await uploadImagesToCos(images, cosOptions)
   console.log('上传cos后的图片地址: ', JSON.stringify(replaceInfos, undefined, 2))
   const newContent = replaceMarkdownImageUrls(content, replaceInfos)
-  return newContent
+  const newFileName = fileName.substring(0, fileName.length - 3) + '_replaced.md'
+  fs.writeFileSync(newFileName, newContent, 'utf-8')
+  return newFileName
 }
 
 module.exports = {

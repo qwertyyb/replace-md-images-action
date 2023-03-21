@@ -75953,12 +75953,22 @@ const replaceMdImages = async (fileName, cosOptions = {}) => {
   const replaceInfos = await uploadImagesToCos(images, cosOptions)
   console.log('上传cos后的图片地址: ', JSON.stringify(replaceInfos, undefined, 2))
   const newContent = replaceMarkdownImageUrls(content, replaceInfos)
-  return newContent
+  const newFileName = fileName.substring(0, fileName.length - 3) + '_replaced.md'
+  fs.writeFileSync(newFileName, newContent, 'utf-8')
+  return newFileName
 }
 
 module.exports = {
   replaceMdImages
 }
+
+/***/ }),
+
+/***/ 1050:
+/***/ ((module) => {
+
+module.exports = eval("require")("@actions/artifact");
+
 
 /***/ }),
 
@@ -76393,7 +76403,22 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(4799);
 const github = __nccwpck_require__(7956);
+const artifact = __nccwpck_require__(1050);
 const { replaceMdImages } = __nccwpck_require__(8545);
+
+const uploadArtifact = async (infos) => {
+  const artifactClient = artifact.create()
+  const artifactName = 'md';
+  const files = infos.map(info => info.newFileName)
+  console.log(`artifact: ${JSON.stringify(files)}`)
+  const rootDirectory = process.cwd()
+  const options = {
+      continueOnError: false
+  }
+
+  const uploadResult = await artifactClient.uploadArtifact(artifactName, files, rootDirectory, options)
+  return uploadResult
+}
 
 const run = async () => {
   const token = core.getInput('token')
@@ -76423,14 +76448,15 @@ const run = async () => {
     const cosOptions = {
       secretId, secretKey, bucket, region, prefix
     }
-    const content = await Promise.all(mdfiles.map(async mdfile => {
-      const newContent = await replaceMdImages(mdfile, cosOptions)
+    const infos = await Promise.all(mdfiles.map(async mdfile => {
+      const newFileName = await replaceMdImages(mdfile, cosOptions)
       return {
         filename: mdfile,
-        content: newContent
+        newFileName: newFileName
       }
     }))
-    core.setOutput('content', content)
+    const result = uploadArtifact(infos)
+    console.log(`result: ${JSON.stringify(result)}`)
   } catch (error) {
     core.setFailed(`run error: ${error.message}`);
   }

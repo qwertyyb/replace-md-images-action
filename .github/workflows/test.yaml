@@ -17,5 +17,3 @@ jobs:
           secretId: ${{ secrets.SECRETID }}
           secretKey: ${{ secrets.SECRETKEY }}
           prefix: '/tmp/md/'
-      - name: Get the output
-        run: echo "${{ steps.action.outputs.content }}"

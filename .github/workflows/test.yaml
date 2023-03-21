@@ -17,6 +17,5 @@ jobs:
           secretId: ${{ secrets.SECRETID }}
           secretKey: ${{ secrets.SECRETKEY }}
           prefix: '/tmp/md/'
-      # Use the output from the `hello` step
-      - name: Get the output time
-        run: echo "${{ steps.action.outputs.time }}"
+      - name: Get the output
+        run: echo "${{ steps.action.outputs.content }}"

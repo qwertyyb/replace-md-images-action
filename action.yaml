@@ -6,19 +6,19 @@ inputs:
     default: ${{ github.token }}
     required: true
   secretId:
-    description: 'cos secret id',
+    description: 'cos secret id'
     required: true
   secretKey:
-    description: 'cos secret key',
+    description: 'cos secret key'
     required: true
   bucket:
-    description: 'cos bucket',
+    description: 'cos bucket'
     required: true
   region:
-    description: 'cos region',
+    description: 'cos region'
     required: true
   prefix:
-    description: 'cos prefix',
+    description: 'cos prefix'
     required: true
 outputs:
   content:

@@ -8,10 +8,12 @@ const run = async () => {
 
   try {
     const repo = github.context.repo
+    console.log(`repo: ${JSON.stringify(repo)}`)
+    console.log(`sha: ${github.context.sha}`)
     const commit = await octokit.rest.git.getCommit({
       owner: repo.owner,
       repo: repo.repo,
-      commit: github.context.sha
+      commit_sha: github.context.sha
     })
     console.log(`commit: ${JSON.stringify(commit, undefined, 2)}`);
     core.setOutput('content', 'payload')

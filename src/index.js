@@ -6,9 +6,6 @@ const token = core.getInput('token');
 const octokit = new github.getOctokit(token)
 
 try {
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
   const repo = github.context.repo
   const commit = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
     owner: repo.owner,

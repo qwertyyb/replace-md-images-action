@@ -1,8 +1,12 @@
 name: 'replace md images'
 description: 'replace images in markdown to tencent cloud cos url'
+inputs:
+  token:
+    description: 'github token'
+    default: '${{ secrets.GITHUB_TOKEN }}'
 outputs:
-  content: # id of output
-    description: 'The time we greeted you'
+  content:
+    description: 'replaced markdown'
 runs:
   using: 'node16'
   main: 'dist/index.js'

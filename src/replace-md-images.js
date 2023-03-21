@@ -44,7 +44,13 @@ const replaceMdImages = async (fileName, cosOptions = {}) => {
   const newContent = replaceMarkdownImageUrls(content, replaceInfos)
   const newFileName = fileName.substring(0, fileName.length - 3) + '_replaced.md'
   fs.writeFileSync(newFileName, newContent, 'utf-8')
-  return newFileName
+  // 上传cos
+  const previewUrl = await upload({ buffer: Buffer.from(newContent, 'utf-8'), fileName: newFileName }, cosOptions)
+  return {
+    newFileName,
+    newContent,
+    previewUrl
+  }
 }
 
 module.exports = {

@@ -46,14 +46,18 @@ const run = async () => {
       secretId, secretKey, bucket, region, prefix
     }
     const infos = await Promise.all(mdfiles.map(async mdfile => {
-      const newFileName = await replaceMdImages(mdfile, cosOptions)
+      const { newFileName, previewUrl, newContent } = await replaceMdImages(mdfile, cosOptions)
       return {
         filename: mdfile,
-        newFileName: newFileName
+        newFileName: newFileName,
+        previewUrl,
+        newContent
       }
     }))
+    console.log(`previewUrl: ${JSON.stringify(infos.map(info => info.previewUrl))}`)
     const result = uploadArtifact(infos)
     console.log(`result: ${JSON.stringify(result)}`)
+    core.setOutput('result', infos)
   } catch (error) {
     core.setFailed(`run error: ${error.message}`);
   }

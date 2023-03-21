@@ -20,6 +20,9 @@ inputs:
   prefix:
     description: 'cos prefix'
     required: true
+outputs:
+  result:
+    description: 'handled result'
 runs:
   using: 'node16'
   main: 'dist/index.js'

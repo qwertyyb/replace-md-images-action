@@ -5,9 +5,7 @@ const notify = async (infos, webhookUrl) => {
   if (links.length > 1) {
     links = links.map((link, index) => `${index+1}. ${link}`)
   }
-  const content = `### 新的文章已就绪
-    ${links.join('\n')}
-    可进入[排版页面](https://markdown.com.cn/editor/)查看效果`
+  const content = `### 新的文章已就绪:\n\n${links.join('\n')}\n\n可进入[排版页面](https://markdown.com.cn/editor/)查看效果`
   const res = await fetch(webhookUrl, {
     method: 'POST',
     body: JSON.stringify({

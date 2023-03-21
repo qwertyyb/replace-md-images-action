@@ -1,0 +1,8 @@
+name: 'replace md images'
+description: 'replace images in markdown to tencent cloud cos url'
+outputs:
+  content: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

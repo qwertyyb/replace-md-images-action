@@ -1,0 +1,15 @@
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: test action
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: test
+        id: action
+        uses: ./
+      # Use the output from the `hello` step
+      - name: Get the output time
+        run: echo "${{ steps.action.outputs.time }}"

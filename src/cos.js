@@ -15,7 +15,8 @@ module.exports = {
       throw new Error('initClient is not called')
     }
     const params = {
-      ...cosOptions,
+      Bucket: cosOptions.bucket,
+      Region: cosOptions.Region,
       Key: path.join(cosOptions.prefix || 'md/', fileName)
     }
     await new Promise((resolve, reject) => cos.putObject({

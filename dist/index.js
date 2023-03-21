@@ -9801,10 +9801,13 @@ const run = async () => {
     const repo = github.context.repo
     console.log(`repo: ${JSON.stringify(repo)}`)
     console.log(`sha: ${github.context.sha}`)
-    const commit = await octokit.rest.git.getCommit({
+    const commit = await octokit.request('GET /repos/{owner}/{repo}/commits/{ref}', {
       owner: repo.owner,
       repo: repo.repo,
-      commit_sha: github.context.sha
+      ref: github.context.ref,
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
     })
     console.log(`commit: ${JSON.stringify(commit, undefined, 2)}`);
     core.setOutput('content', 'payload')

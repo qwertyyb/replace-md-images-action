@@ -87,7 +87,7 @@ func _ready():
 
 代码很简单，节点ready的时候，获取子节点 `GroundShapePath` 的曲线点集，赋值给 `GroundShape` 的 `polygon` 属性。这里需要注意的是，子节点的 `_ready` 调用在父节点之前。在 `gdscript.gd` 的第一行添加 `tool` 是为了方便在编辑器中也能预览效果。现在保存脚本内容，保存场景为 `Game.tscn`，然后关闭场景，重新打开此场景，现在应该就能看到 `GroundShape` 的提示消失了，并且能够看到它的形状。如下图所示，彩色部分就是 `GroundShape` 的开关了，点击可以看到开关的点
 
-[![GroundShape](https://i.328888.xyz/2023/03/20/PG1eA.png)](https://imgloc.com/i/PG1eA)
+![GroundShape](https://i.328888.xyz/2023/03/20/PG1eA.png)
 
 ### 位置偏移的处理
 

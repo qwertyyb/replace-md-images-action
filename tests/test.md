@@ -117,3 +117,59 @@ func _draw():
 ![编辑器效果](https://i.328888.xyz/2023/03/20/PhDSP.png)
 
 可以选中 `GroundShapePath`，然后点击预览区域上方的锁图标，点击锁定位置，这样就不用担心 `GroundShapePath` 被意外移动了。
+
+## 添加人物
+
+### 添加
+有了添加地面的经验，人物的添加就会顺畅很多，按下面步骤添加即可:
+
+1. 先在根节点下添加 `RigidBody2D` 节点，命名为 `Player`，此时会提示没有碰撞形状节点
+2. 不着急添加碰撞开关，可以先在 `Player` 节点下添加 `Sprite` 节点，设置 `Sprite` 的 `Texture` 属性。
+3. 选中 `Sprite` 节点，点击预览区域上方的 `Sprite` 打开转换菜单，点击 **创建CollisionPolygon2D** 兄弟节点，然后在弹窗中点击右下角的 **创建CollisionPolygon2D** 此时，会在 `Sprite` 的同级添加 `CollisonPolygon2D` 节点，而且 `Player` 节点也没有了错误提示。这一步是把 `Sprite` 转换为 `RigidBody2D` 所需要的 `CollisionPolygon2D`。修改 `CollisionPolygon2D` 命名为 `PlayerBody`。
+
+    ![创建CollisionPolygon2D子节点](https://user-images.githubusercontent.com/16240729/226806621-8926ba09-ecf9-4e75-bcea-51826c4b1e21.png)
+
+    ![CollisionPolygon2D子节点](https://user-images.githubusercontent.com/16240729/226806663-c8188445-033f-4dec-94e1-843646921026.png)
+
+4. 此时我们人物就已经添加OK了
+
+    ![Player](https://user-images.githubusercontent.com/16240729/226806950-4908fd43-4722-4100-a000-75bf52611483.png)
+
+点击右上角运行当前场景，看看效果。
+
+![运行效果](https://user-images.githubusercontent.com/16240729/226808705-263a262e-4b64-4234-9d5b-a0d44e147ecc.gif)
+
+### 遇到问题
+可能会遇到以下几个问题:
+
+1. 人物在左上角，被遮挡了一半。
+
+2. 人物落下后，静止了，没有沿着地面滑动。
+
+  ![遮挡、静止](https://user-images.githubusercontent.com/16240729/226808698-407d534e-7ec6-4825-8c95-81c62c21ccfe.gif)
+
+3. 如上运行效果所示，人物落下后，沿着地面翻滚。
+
+### 解决问题
+1. 第一个问题可以通过在编辑器中挪动 `Player` 节点的位置，把 `Player` 节点挪到编辑器中蓝色区域内的地面上方即可，蓝色区域就是运行时的可见区域。
+
+2. 落下后静止了，可能有两个原因
+   - 地面坡度问题，这个可以通过调整 `GroundShapePath` 曲线来解决
+   - 摩擦力的问题，这个人与地面的摩擦力太大，导致人物静止，不会沿地面滑动。所以我们可以调整 `Ground` 和 `Player` 的摩擦系数，都调整为0。调整方式为选择节点，在属性面板的 `Physics Material Override` 点击 **新建PhysicsMaterial**，然后把 `friction` 设置为 0,  `Ground` 或 `Player` 最好都按上面的方式调整。
+
+      ![调整摩擦系数](https://user-images.githubusercontent.com/16240729/226806673-c4ceb4bc-58cd-438b-9c25-e5167d27cee2.png)
+
+3. 人物落下后翻滚有两个原因
+   - 摩擦力的问题，摩擦力太大，导致无法滑动，人物只能翻滚，这个解决方案与上面一致。
+   - 碰撞体形状问题，可能是人物 `Sprite` 生成的碰撞形状底部不够平滑，导致滑动过程中多次碰撞，造成人物的翻滚。为此当然可以把碰撞形状 `PlayerShape` 的底部调平滑，但是这里使用另一种方式，在 `Player` 下添加 `CollisionShape2D` 作为子节点，与 `PlayerShape` 同级，命名为 `BoardShape`。在属性面板添加 `CapsuleShape2D` 胶囊形状，也即椭圆形，调整 `BoardShape` 的位置和大小，调整至如下图，让人物碰撞形状的底部足够光滑。这样 `Player` 的碰撞形状，实际上就是由 `PlayerShape` 和 `BoardShape` 组合而成的。
+   - `Player` 的重心太高，众所周知重心太高，也会导致翻滚，为此需要降低 `Player` 的重心，而通过 `Godot` 的文档，了解到 `RigidBody2D` 的重心就是其原点，也就是点击 `Player` 时出现的十字光标的位置，这个光标的位置不能移动，但是可以移动其内部的子节点的位置，所以可以把 `Player` 的三个子节点 `Sprite`, `PlayerShape` 和 `BoardShape` 向上平移同样的距离，使重心下降。可以调整三个节点的 `transform` 属性中 y 的位置，也可以在预览区域拖动挪动位置。最后调整后如图所示
+
+      ![调整重心](https://user-images.githubusercontent.com/16240729/226806686-cd455e3b-0276-45f4-9c1e-d28e49d19106.png)
+
+处理完后上面的三个问题后，再运行测试，发现人物已经能沿着滑道滑动了。
+
+  ![最终效果](https://user-images.githubusercontent.com/16240729/226808713-5ea87759-a8e9-458a-96df-c88f53e29adc.gif)
+
+## 下一步
+
+项目的基本场景已经搭建OK了，剩余的就是不断完善。下一步，将会完善滑道，让滑道无限随机生成。

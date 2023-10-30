@@ -20,6 +20,9 @@ inputs:
   prefix:
     description: 'cos prefix'
     required: true
+  mdfile:
+    description: 'markdown file name'
+    required: false
   webhookUrl:
     description: 'work wechat robot webhook url'
 outputs:

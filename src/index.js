@@ -26,6 +26,7 @@ const run = async () => {
   const region = core.getInput('region')
   const prefix = core.getInput('prefix')
   const webhookUrl = core.getInput('webhookUrl')
+  const mdfile = core.getInput('mdfile')
 
   const octokit = new github.getOctokit(token)
 
@@ -41,7 +42,12 @@ const run = async () => {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     })
-    const mdfiles = res.data.files.filter(file => file.status !== 'removed' && file.filename.endsWith('.md')).map(file => file.filename)
+    let mdfiles = res.data.files
+      .filter(file => file.status !== 'removed' && file.filename.endsWith('.md'))
+      .map(file => file.filename)
+    if (mdfile) {
+      mdfiles = mdfiles.filter(filename => filename.includes(mdfile))
+    }
     console.log(`markdown files: ${JSON.stringify(mdfiles, undefined, 2)}`);
 
     const cosOptions = {
